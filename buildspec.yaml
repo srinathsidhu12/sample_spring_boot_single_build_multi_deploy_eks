@@ -14,19 +14,22 @@ phases:
 
   build:
     commands:
-      - echo Building the application...
+      - echo "🔨 Building the application..."
       - mvn clean package
-      - echo Building the Docker image...
-      - ls -al  # list current directory
+      - echo "📁 Files in current directory:"
+      - ls -al
+      - echo "🐳 Building Docker image..."
       - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
+      - echo "✅ Docker build completed"
+      - docker images  # show available images to verify it was built
 
   post_build:
     commands:
-      - echo Pushing the Docker image...
+      - echo "📤 Pushing Docker image to ECR..."
       - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - echo Writing image definitions...
-      - |
-        printf '[{"name":"sample-java-container","imageUri":"%s"}]' "$REPOSITORY_URI:$IMAGE_TAG" > imagedefinitions.json
+      - echo "📝 Creating imagedefinitions.json..."
+      - printf '[{"name":"sample-java-app","imageUri":"%s"}]' "$REPOSITORY_URI:$IMAGE_TAG" > imagedefinitions.json
+      - cat imagedefinitions.json
 
 artifacts:
   files:
