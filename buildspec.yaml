@@ -3,8 +3,11 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - set -e
-      - echo Logging in to Amazon ECR...
+      - echo "🔍 AWS CLI Version:"
+      - aws --version
+      - echo "🐳 Docker Version:"
+      - docker --version
+      - echo "🔐 Logging in to Amazon ECR..."
       - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 699475953949.dkr.ecr.ap-south-1.amazonaws.com
       - REPOSITORY_URI=699475953949.dkr.ecr.ap-south-1.amazonaws.com/sample-java-app
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
