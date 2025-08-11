@@ -5,7 +5,7 @@ phases:
     commands:
       - echo "🔍 AWS CLI Version:"
       - aws --version
-      - echo "🐳 Docker Version:"
+      - echo "🐳 Docker Version.............:"
       - docker --version
       - echo "🔐 Logging in to Amazon ECR............."
       - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 699475953949.dkr.ecr.ap-south-1.amazonaws.com
