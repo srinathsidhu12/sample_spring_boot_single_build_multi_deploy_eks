@@ -21,12 +21,13 @@ phases:
 
       # Login to CodeArtifact for dependency resolution & deployment
       - echo "🔐 Logging in to AWS CodeArtifact..."
-      - " export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
+      - |
+        export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
            --domain $DOMAIN_NAME \
            --domain-owner $DOMAIN_OWNER \
            --region $AWS_REGION \
            --query authorizationToken \
-           --output text)"
+           --output text)
 
       # Login to ECR
       - echo "🔐 Logging in to Amazon ECR..."
@@ -40,7 +41,8 @@ phases:
   build:
     commands:
       - echo "🔨 Building & Deploying application to CodeArtifact..."
-      - mvn clean deploy -Dmaven.test.skip=true \
+      - |
+        mvn clean deploy -Dmaven.test.skip=true \
           -Daws.codeArtifact.token=$CODEARTIFACT_AUTH_TOKEN
       - echo "📁 JAR built and deployed to CodeArtifact"
       - ls -al target/
