@@ -3,9 +3,9 @@ version: 0.2
 env:
   variables:
     AWS_REGION: "ap-south-1"
-    DOMAIN_NAME: "<your-codeartifact-domain>"
+    DOMAIN_NAME: "sample"
     DOMAIN_OWNER: "699475953949" # your AWS account ID
-    REPOSITORY_NAME: "<your-codeartifact-repo>"
+    REPOSITORY_NAME: "sample-java-app"
     ECR_URI: "699475953949.dkr.ecr.ap-south-1.amazonaws.com/sample-java-app"
 
 phases:

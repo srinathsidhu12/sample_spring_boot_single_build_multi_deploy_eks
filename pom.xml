@@ -22,17 +22,17 @@
     <!-- CodeArtifact dependency repository -->
     <repositories>
         <repository>
-            <id>codeartifact</id>
-            <url>https://<domain-name>-<account-id>.d.codeartifact.<region>.amazonaws.com/maven/<repo-name>/</url>
+            <id>sample-sample-java-app</id>
+            <url>https://sample-699475953949.d.codeartifact.ap-south-1.amazonaws.com/maven/sample-java-app/</url>
         </repository>
     </repositories>
 
     <!-- CodeArtifact deployment -->
     <distributionManagement>
         <repository>
-            <id>codeartifact</id>
-            <name>AWS CodeArtifact Repository</name>
-            <url>https://<domain-name>-<account-id>.d.codeartifact.<region>.amazonaws.com/maven/<repo-name>/</url>
+            <id>sample-sample-java-app</id>
+            <name>sample-sample-java-app</name>
+            <url>https://sample-699475953949.d.codeartifact.ap-south-1.amazonaws.com/maven/sample-java-app/</url>
         </repository>
     </distributionManagement>
 
