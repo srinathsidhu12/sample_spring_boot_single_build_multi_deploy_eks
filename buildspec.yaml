@@ -1,34 +1,62 @@
 version: 0.2
 
+env:
+  variables:
+    AWS_REGION: "ap-south-1"
+    DOMAIN_NAME: "<your-codeartifact-domain>"
+    DOMAIN_OWNER: "699475953949" # your AWS account ID
+    REPOSITORY_NAME: "<your-codeartifact-repo>"
+    ECR_URI: "699475953949.dkr.ecr.ap-south-1.amazonaws.com/sample-java-app"
+
 phases:
+  install:
+    runtime-versions:
+      java: corretto17
+      docker: 20
+
   pre_build:
     commands:
-      - echo "🔍 AWS CLI Version:"
-      - aws --version
-      - echo "🐳 Docker Version.............:"
-      - docker --version
-      - echo "🔐 Logging in to Amazon ECR............."
-      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 699475953949.dkr.ecr.ap-south-1.amazonaws.com
-      - REPOSITORY_URI=699475953949.dkr.ecr.ap-south-1.amazonaws.com/sample-java-app
-      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - echo "🔍 AWS CLI Version:" && aws --version
+      - echo "🐳 Docker Version:" && docker --version
+
+      # Login to CodeArtifact for dependency resolution & deployment
+      - echo "🔐 Logging in to AWS CodeArtifact..."
+      - export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
+          --domain $DOMAIN_NAME \
+          --domain-owner $DOMAIN_OWNER \
+          --region $AWS_REGION \
+          --query authorizationToken \
+          --output text)
+
+      # Login to ECR
+      - echo "🔐 Logging in to Amazon ECR..."
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_URI
+
+      # Build number + date format (naming handled here, not in POM)
+      - BUILD_NUMBER_DATE="${CODEBUILD_BUILD_NUMBER}-$(date +%Y%m%d)"
+      - export IMAGE_TAG=$BUILD_NUMBER_DATE
+      - echo "📌 Docker image tag will be: $IMAGE_TAG"
 
   build:
     commands:
-      - echo "🔨 Building the application..."
-      - mvn clean package
-      - echo "📁 Files in current directory:"
-      - ls -al
+      - echo "🔨 Building & Deploying application to CodeArtifact..."
+      - mvn clean deploy -Dmaven.test.skip=true \
+          -Daws.codeArtifact.token=$CODEARTIFACT_AUTH_TOKEN
+      - echo "📁 JAR built and deployed to CodeArtifact"
+      - ls -al target/
+
       - echo "🐳 Building Docker image..."
-      - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
+      - docker build -t $ECR_URI:$IMAGE_TAG .
       - echo "✅ Docker build completed"
-      - docker images  # show available images to verify it was built
+      - docker images
 
   post_build:
     commands:
       - echo "📤 Pushing Docker image to ECR..."
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - docker push $ECR_URI:$IMAGE_TAG
+
       - echo "📝 Creating imagedefinitions.json..."
-      - printf '[{"name":"sample-java-container","imageUri":"%s"}]' "$REPOSITORY_URI:$IMAGE_TAG" > imagedefinitions.json
+      - printf '[{"name":"sample-java-container","imageUri":"%s"}]' "$ECR_URI:$IMAGE_TAG" > imagedefinitions.json
       - cat imagedefinitions.json
 
 artifacts:

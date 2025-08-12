@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
@@ -19,6 +19,23 @@
         <relativePath/>
     </parent>
 
+    <!-- CodeArtifact dependency repository -->
+    <repositories>
+        <repository>
+            <id>codeartifact</id>
+            <url>https://<domain-name>-<account-id>.d.codeartifact.<region>.amazonaws.com/maven/<repo-name>/</url>
+        </repository>
+    </repositories>
+
+    <!-- CodeArtifact deployment -->
+    <distributionManagement>
+        <repository>
+            <id>codeartifact</id>
+            <name>AWS CodeArtifact Repository</name>
+            <url>https://<domain-name>-<account-id>.d.codeartifact.<region>.amazonaws.com/maven/<repo-name>/</url>
+        </repository>
+    </distributionManagement>
+
     <dependencies>
         <!-- Spring Boot Web Starter -->
         <dependency>
@@ -26,22 +43,12 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- For Unit Testing -->
+        <!-- Unit Testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <!-- Package as executable JAR -->
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 </project>
 
