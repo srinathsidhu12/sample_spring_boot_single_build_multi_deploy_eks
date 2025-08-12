@@ -36,7 +36,8 @@ phases:
     commands:
       - echo "🔨 Building & Deploying application to CodeArtifact..."
       - |
-        mvn clean deploy -Dmaven.test.skip=true -Daws.codeArtifact.token=$CODEARTIFACT_AUTH_TOKEN
+        mvn clean deploy -Dmaven.test.skip=true \
+          -Daws.codeArtifact.token=$CODEARTIFACT_AUTH_TOKEN
       - echo "📁 JAR built and deployed to CodeArtifact"
       - ls -al target/
       - echo "🐳 Building Docker image..."
