@@ -21,12 +21,12 @@ phases:
 
       # Login to CodeArtifact for dependency resolution & deployment
       - echo "🔐 Logging in to AWS CodeArtifact..."
-      - export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
-          --domain $DOMAIN_NAME \
-          --domain-owner $DOMAIN_OWNER \
-          --region $AWS_REGION \
-          --query authorizationToken \
-          --output text)
+      - " export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
+           --domain $DOMAIN_NAME \
+           --domain-owner $DOMAIN_OWNER \
+           --region $AWS_REGION \
+           --query authorizationToken \
+           --output text)"
 
       # Login to ECR
       - echo "🔐 Logging in to Amazon ECR..."
