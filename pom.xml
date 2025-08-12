@@ -29,11 +29,11 @@
 
     <!-- CodeArtifact deployment -->
     <distributionManagement>
-        <repository>
-            <id>sample-sample-java-app</id>
-            <name>sample-sample-java-app</name>
-            <url>https://sample-699475953949.d.codeartifact.ap-south-1.amazonaws.com/maven/sample-java-app/</url>
-        </repository>
+      <repository>
+         <id>sample-sample-java-app</id>
+         <name>sample-sample-java-app</name>
+         <url>https://sample-699475953949.d.codeartifact.ap-south-1.amazonaws.com/maven/sample-java-app/</url>
+      </repository>
     </distributionManagement>
 
     <dependencies>
