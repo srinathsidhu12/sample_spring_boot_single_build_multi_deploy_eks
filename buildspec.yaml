@@ -4,7 +4,7 @@ env:
   variables:
     AWS_REGION: "ap-south-1"
     DOMAIN_NAME: "sample"
-    DOMAIN_OWNER: "699475953949" # your AWS account ID
+    DOMAIN_OWNER: "699475953949"
     REPOSITORY_NAME: "sample-java-app"
     ECR_URI: "699475953949.dkr.ecr.ap-south-1.amazonaws.com/sample-java-app"
 
@@ -19,21 +19,21 @@ phases:
       - echo "🔍 AWS CLI Version:" && aws --version
       - echo "🐳 Docker Version:" && docker --version
 
-      # Login to CodeArtifact for dependency resolution & deployment
+      # Login to CodeArtifact
       - echo "🔐 Logging in to AWS CodeArtifact..."
       - |
         export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
-           --domain $DOMAIN_NAME \
-           --domain-owner $DOMAIN_OWNER \
-           --region $AWS_REGION \
-           --query authorizationToken \
-           --output text)
+          --domain $DOMAIN_NAME \
+          --domain-owner $DOMAIN_OWNER \
+          --region $AWS_REGION \
+          --query authorizationToken \
+          --output text)
 
       # Login to ECR
       - echo "🔐 Logging in to Amazon ECR..."
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_URI
 
-      # Build number + date format (naming handled here, not in POM)
+      # Build number + date
       - BUILD_NUMBER_DATE="${CODEBUILD_BUILD_NUMBER}-$(date +%Y%m%d)"
       - export IMAGE_TAG=$BUILD_NUMBER_DATE
       - echo "📌 Docker image tag will be: $IMAGE_TAG"
