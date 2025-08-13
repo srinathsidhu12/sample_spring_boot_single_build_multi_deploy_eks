@@ -21,13 +21,15 @@ phases:
           --query authorizationToken \
           --output text)
       - echo "✅ Token retrieved"
+      - mkdir -p ~/.m2
+      - cp settings.xml ~/.m2/settings.xml
 
   pre_build:
     commands:
       - echo "📦 Building JAR..."
-      - mvn clean package -DskipTests
+      - mvn clean package -DskipTests -s ~/.m2/settings.xml
       - echo "🚀 Deploying to CodeArtifact..."
-      - mvn deploy
+      - mvn deploy -s ~/.m2/settings.xml
 
       - echo "🔐 Logging in to Amazon ECR..."
       - aws ecr get-login-password --region $AWS_REGION \
