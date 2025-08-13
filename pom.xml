@@ -33,7 +33,12 @@
             <url>https://sample-699475953949.d.codeartifact.ap-south-1.amazonaws.com/maven/sample-java-app/</url>
         </repository>
     </repositories>
-
+    <distributionManagement>
+    <repository>
+        <id>codeartifact</id>
+        <url>https://sample-699475953949.d.codeartifact.ap-south-1.amazonaws.com/maven/sample-java-app/</url>
+    </repository>
+    </distributionManagement>
     <dependencies>
         <!-- Core Spring Boot -->
         <dependency>
