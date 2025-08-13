@@ -1,54 +1,43 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.example</groupId>
-    <artifactId>demo</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>sample-java-app</artifactId>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>sample-java-app</name>
-    <description>Sample Java Spring Boot Application</description>
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+    </properties>
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.4</version>
-        <relativePath/>
-    </parent>
-
-    <!-- CodeArtifact dependency repository -->
+    <!-- Use CodeArtifact for dependencies -->
     <repositories>
         <repository>
-            <id>sample-sample-java-app</id>
+            <id>codeartifact</id>
             <url>https://sample-699475953949.d.codeartifact.ap-south-1.amazonaws.com/maven/sample-java-app/</url>
         </repository>
     </repositories>
 
-    <!-- CodeArtifact deployment -->
+    <!-- Deploy JAR to CodeArtifact -->
     <distributionManagement>
-      <repository>
-         <id>sample-sample-java-app</id>
-         <name>sample-sample-java-app</name>
-         <url>https://sample-699475953949.d.codeartifact.ap-south-1.amazonaws.com/maven/sample-java-app/</url>
-      </repository>
+        <repository>
+            <id>codeartifact</id>
+            <url>https://sample-699475953949.d.codeartifact.ap-south-1.amazonaws.com/maven/sample-java-app/</url>
+        </repository>
     </distributionManagement>
 
     <dependencies>
-        <!-- Spring Boot Web Starter -->
+        <!-- Example dependency -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <!-- Unit Testing -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+            <version>3.2.5</version>
         </dependency>
     </dependencies>
+
 </project>
 

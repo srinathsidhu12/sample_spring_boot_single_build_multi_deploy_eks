@@ -7,46 +7,43 @@ env:
     DOMAIN_OWNER: "699475953949"
     REPOSITORY_NAME: "sample-java-app"
     ECR_URI: "699475953949.dkr.ecr.ap-south-1.amazonaws.com/sample-java-app"
+    IMAGE_TAG: "latest"
 
 phases:
   install:
     runtime-versions:
       java: corretto17
-  pre_build:
     commands:
-      - echo "🔍 AWS CLI Version:" && aws --version
-      - echo "🐳 Docker Version:" && docker --version
-      - echo "🔐 Logging in to AWS CodeArtifact..."
-      - |
-        export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
+      - echo "🔐 Getting CodeArtifact token..."
+      - export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
           --domain $DOMAIN_NAME \
           --domain-owner $DOMAIN_OWNER \
-          --region $AWS_REGION \
           --query authorizationToken \
           --output text)
+      - echo "✅ Token retrieved"
+
+  pre_build:
+    commands:
+      - echo "📦 Building JAR..."
+      - mvn clean package -DskipTests
+      - echo "🚀 Deploying to CodeArtifact..."
+      - mvn deploy
+
       - echo "🔐 Logging in to Amazon ECR..."
-      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_URI
-      - BUILD_NUMBER_DATE="${CODEBUILD_BUILD_NUMBER}-$(date +%Y%m%d)"
-      - export IMAGE_TAG=$BUILD_NUMBER_DATE
-      - echo "Docker image tag will be:$IMAGE_TAG"
+      - aws ecr get-login-password --region $AWS_REGION \
+        | docker login --username AWS --password-stdin $ECR_URI
 
   build:
     commands:
-      - echo "🔨 Building & deploying JAR to CodeArtifact..."
-      - mvn deploy -Dusername=aws -Dpassword=$CODEARTIFACT_AUTH_TOKEN
-      - echo "✅ Artifact deployed to CodeArtifact"
       - echo "🐳 Building Docker image..."
       - docker build -t $ECR_URI:$IMAGE_TAG .
-      - echo "✅ Docker build completed"
-      - docker images | grep $ECR_URI || echo "No docker image found with tag $ECR_URI:$IMAGE_TAG"
 
   post_build:
     commands:
-      - echo "📤 Pushing Docker image to ECR..."
+      - echo "📤 Pushing Docker image..."
       - docker push $ECR_URI:$IMAGE_TAG
       - echo "📝 Creating imagedefinitions.json..."
-      - printf '[{"name":"sample-java-container","imageUri":"%s"}]' "$ECR_URI:$IMAGE_TAG" > imagedefinitions.json
-      - cat imagedefinitions.json
+      - echo "[{\"name\":\"sample-java-app\",\"imageUri\":\"$ECR_URI:$IMAGE_TAG\"}]" > imagedefinitions.json
 
 artifacts:
   files:
