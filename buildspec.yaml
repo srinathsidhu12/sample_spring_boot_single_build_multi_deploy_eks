@@ -13,7 +13,6 @@ phases:
   install:
     runtime-versions:
       java: corretto17
-      docker: 20
     commands:
       - echo "📦 Copying settings.xml to Maven home"
       - mkdir -p ~/.m2
