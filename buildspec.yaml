@@ -3,8 +3,6 @@ version: 0.2
 env:
   variables:
     AWS_REGION: "ap-south-1"
-    DOMAIN_NAME: "sample"
-    DOMAIN_OWNER: "699475953949"
     REPOSITORY_NAME: "sample-java-app"
     ECR_URI: "699475953949.dkr.ecr.ap-south-1.amazonaws.com/sample-java-app"
     IMAGE_TAG: "latest"
@@ -17,13 +15,32 @@ phases:
       - echo "📦 Copying settings.xml to Maven home"
       - mkdir -p ~/.m2
       - cp settings.xml ~/.m2/settings.xml
-      - echo "🔐 Getting CodeArtifact token..."
+      - echo "📦 Fetching CodeArtifact Domain Name..."
+      - export DOMAIN_NAME=$(aws codeartifact list-domains --region $AWS_REGION --query 'domains[0].name' --output text)
+      - echo "✅ DOMAIN_NAME = $DOMAIN_NAME"
+      - echo "👤 Fetching AWS Account ID..."
+      - export DOMAIN_OWNER=$(aws sts get-caller-identity --query 'Account' --output text)
+      - echo "✅ DOMAIN_OWNER = $DOMAIN_OWNER"
+      # Authenticate to CodeArtifact (for Maven dependencies)
+      - echo "🔐 Getting CodeArtifact auth token..."
       - export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
-          --domain $DOMAIN_NAME \
-          --domain-owner $DOMAIN_OWNER \
-          --region $AWS_REGION \
+          --domain "$DOMAIN_NAME" \
+          --domain-owner "$DOMAIN_OWNER" \
+          --region "$AWS_REGION" \
           --query authorizationToken \
           --output text)
+
+      # Configure Maven to use CodeArtifact repository
+      - export MAVEN_REPO_URL=$(aws codeartifact get-repository-endpoint \
+          --domain "$DOMAIN_NAME" \
+          --domain-owner "$DOMAIN_OWNER" \
+          --repository "$REPOSITORY_NAME" \
+          --format maven \
+          --region "$AWS_REGION" \
+          --query repositoryEndpoint \
+          --output text)
+      - echo "✅ Maven Repo URL = $MAVEN_REPO_URL"
+       
 
   pre_build:
     commands:
