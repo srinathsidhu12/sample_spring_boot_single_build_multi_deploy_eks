@@ -1,0 +1,26 @@
+<settings>
+  <servers>
+    <server>
+      <id>codeartifact</id>
+      <username>aws</username>
+      <password>${env.CODEARTIFACT_AUTH_TOKEN}</password>
+    </server>
+  </servers>
+
+  <profiles>
+    <profile>
+      <id>codeartifact-repo</id>
+      <repositories>
+        <repository>
+          <id>codeartifact</id>
+          <url>https://sample-699475953949.d.codeartifact.ap-south-1.amazonaws.com/maven/sample-java-app/</url>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
+
+  <activeProfiles>
+    <activeProfile>codeartifact-repo</activeProfile>
+  </activeProfiles>
+</settings>
+

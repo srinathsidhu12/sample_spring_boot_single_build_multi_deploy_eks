@@ -13,26 +13,31 @@ phases:
   install:
     runtime-versions:
       java: corretto17
+      docker: 20
     commands:
+      - echo "📦 Copying settings.xml to Maven home"
+      - mkdir -p ~/.m2
+      - cp settings.xml ~/.m2/settings.xml
       - echo "🔐 Getting CodeArtifact token..."
       - export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
           --domain $DOMAIN_NAME \
           --domain-owner $DOMAIN_OWNER \
+          --region $AWS_REGION \
           --query authorizationToken \
           --output text)
 
   pre_build:
     commands:
-      - echo "📦 Building JAR..."
-      - mvn clean package -DskipTests -Daws.codeArtifact.token=$CODEARTIFACT_AUTH_TOKEN -Daws.codeArtifact.username=aws
-      - echo "🚀 Deploying to CodeArtifact..."
-      - mvn deploy -Daws.codeArtifact.token=$CODEARTIFACT_AUTH_TOKEN -Daws.codeArtifact.username=aws
+      - echo "🏗️ Building JAR..."
+      - mvn clean package -DskipTests
       - echo "🔐 Logging in to Amazon ECR..."
       - aws ecr get-login-password --region $AWS_REGION \
         | docker login --username AWS --password-stdin $ECR_URI
 
   build:
     commands:
+      - echo "📤 Deploying JAR to CodeArtifact..."
+      - mvn deploy
       - echo "🐳 Building Docker image..."
       - docker build -t $ECR_URI:$IMAGE_TAG .
 
