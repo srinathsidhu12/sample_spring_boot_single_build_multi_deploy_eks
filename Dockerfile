@@ -1,11 +1,9 @@
-FROM openjdk:17-jdk-slim
+# Instead of Docker Hub:
+# FROM openjdk:17-jdk-slim
+
+# Use AWS's public ECR registry:
+FROM public.ecr.aws/docker/library/openjdk:17-jdk-slim
+
 VOLUME /tmp
-
-# ARG lets Docker accept a variable at build time
-ARG JAR_FILE=target/*.jar
-
-# Copy dynamically named jar into container
-COPY ${JAR_FILE} app.jar
-
+COPY target/sample-java-app.jar app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
-
