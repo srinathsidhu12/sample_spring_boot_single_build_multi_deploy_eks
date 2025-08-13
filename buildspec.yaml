@@ -14,71 +14,51 @@ phases:
     commands:
       - echo "🔍 Installing prerequisites..."
       - mkdir -p ~/.m2
-
-      # Fetch AWS details
       - echo "📦 Fetching CodeArtifact details..."
       - export DOMAIN_NAME=$(aws codeartifact list-domains --region $AWS_REGION --query 'domains[0].name' --output text)
       - export DOMAIN_OWNER=$(aws sts get-caller-identity --query 'Account' --output text)
-
-      # Get Auth token
-      - export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
-          --domain "$DOMAIN_NAME" \
-          --domain-owner "$DOMAIN_OWNER" \
-          --region "$AWS_REGION" \
-          --query authorizationToken \
-          --output text)
-
-      # Get repo endpoint
-      - export MAVEN_REPO_URL=$(aws codeartifact get-repository-endpoint \
-          --domain "$DOMAIN_NAME" \
-          --domain-owner "$DOMAIN_OWNER" \
-          --repository "$REPOSITORY_NAME" \
-          --format maven \
-          --region "$AWS_REGION" \
-          --query repositoryEndpoint \
-          --output text)
+      - export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token --domain "$DOMAIN_NAME" --domain-owner "$DOMAIN_OWNER" --region "$AWS_REGION" --query authorizationToken --output text)
+      - export MAVEN_REPO_URL=$(aws codeartifact get-repository-endpoint --domain "$DOMAIN_NAME" --domain-owner "$DOMAIN_OWNER" --repository "$REPOSITORY_NAME" --format maven --region "$AWS_REGION" --query repositoryEndpoint --output text)
       - echo "✅ Maven Repo URL = $MAVEN_REPO_URL"
-
-      # Generate settings.xml dynamically
-      - cat > ~/.m2/settings.xml <<EOL
-<settings>
-  <servers>
-    <server>
-      <id>codeartifact</id>
-      <username>aws</username>
-      <password>${CODEARTIFACT_AUTH_TOKEN}</password>
-    </server>
-  </servers>
-  <profiles>
-    <profile>
-      <id>codeartifact-repo</id>
-      <repositories>
-        <repository>
-          <id>codeartifact</id>
-          <url>${MAVEN_REPO_URL}</url>
-        </repository>
-      </repositories>
-      <pluginRepositories>
-        <pluginRepository>
-          <id>codeartifact</id>
-          <url>${MAVEN_REPO_URL}</url>
-        </pluginRepository>
-      </pluginRepositories>
-    </profile>
-  </profiles>
-  <activeProfiles>
-    <activeProfile>codeartifact-repo</activeProfile>
-  </activeProfiles>
-</settings>
-EOL
+      - |
+        cat > ~/.m2/settings.xml <<EOL
+        <settings>
+          <servers>
+            <server>
+              <id>codeartifact</id>
+              <username>aws</username>
+              <password>${CODEARTIFACT_AUTH_TOKEN}</password>
+            </server>
+          </servers>
+          <profiles>
+            <profile>
+              <id>codeartifact-repo</id>
+              <repositories>
+                <repository>
+                  <id>codeartifact</id>
+                  <url>${MAVEN_REPO_URL}</url>
+                </repository>
+              </repositories>
+              <pluginRepositories>
+                <pluginRepository>
+                  <id>codeartifact</id>
+                  <url>${MAVEN_REPO_URL}</url>
+                </pluginRepository>
+              </pluginRepositories>
+            </profile>
+          </profiles>
+          <activeProfiles>
+            <activeProfile>codeartifact-repo</activeProfile>
+          </activeProfiles>
+        </settings>
+        EOL
 
   pre_build:
     commands:
       - echo "🏗️ Building JAR using CodeArtifact dependencies..."
       - mvn clean package -DskipTests -s ~/.m2/settings.xml
       - echo "🔐 Logging in to Amazon ECR..."
-      - aws ecr get-login-password --region $AWS_REGION \
-        | docker login --username AWS --password-stdin $ECR_URI
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_URI
 
   build:
     commands:
