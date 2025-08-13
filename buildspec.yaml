@@ -32,24 +32,8 @@ phases:
 
   build:
     commands:
-      - echo "🔨 Building JAR..."
-      - |
-        mvn clean package -Dmaven.test.skip=true \
-          -Dmaven.repo.remote=https://$DOMAIN_NAME-$DOMAIN_OWNER.d.codeartifact.$AWS_REGION.amazonaws.com/maven/$REPOSITORY_NAME/ \
-          -Daws.codeArtifact.token=$CODEARTIFACT_AUTH_TOKEN
-      - echo "📁 JAR built successfully"
-      - ls -al target/
-      - echo "📤 Deploying JAR to CodeArtifact..."
-      - mvn deploy:deploy-file \
-          -DgroupId=com.example \
-          -DartifactId=demo \
-          -Dversion=0.0.1-SNAPSHOT \
-          -Dpackaging=jar \
-          -Dfile=target/demo-0.0.1-SNAPSHOT.jar \
-          -DpomFile=pom.xml \
-          -DrepositoryId=sample-sample-java-app \
-          -Durl=https://$DOMAIN_NAME-$DOMAIN_OWNER.d.codeartifact.$AWS_REGION.amazonaws.com/maven/$REPOSITORY_NAME/ \
-          -Daws.codeArtifact.token=$CODEARTIFACT_AUTH_TOKEN
+      - echo "🔨 Building & deploying JAR to CodeArtifact..."
+      - mvn deploy -Dusername=aws -Dpassword=$CODEARTIFACT_AUTH_TOKEN
       - echo "✅ Artifact deployed to CodeArtifact"
       - echo "🐳 Building Docker image..."
       - docker build -t $ECR_URI:$IMAGE_TAG .
