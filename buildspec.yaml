@@ -72,7 +72,7 @@ phases:
       - echo "📤 Pushing Docker image..."
       - docker push $ECR_URI:$IMAGE_TAG
       - echo "📝 Creating imagedefinitions.json..."
-      - echo "[{\"name\":\"sample-java-app\",\"imageUri\":\"$ECR_URI:$IMAGE_TAG\"}]" > imagedefinitions.json
+      - echo "[{\"name\":\"sample-java-container\",\"imageUri\":\"$ECR_URI:$IMAGE_TAG\"}]" > imagedefinitions.json
 
 artifacts:
   files:
