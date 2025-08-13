@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
@@ -9,12 +9,17 @@
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-    </properties>
+    <name>sample-java-app</name>
+    <description>Sample Java Spring Boot Application</description>
 
-    <!-- Use CodeArtifact for dependencies -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.4</version>
+        <relativePath/>
+    </parent>
+
+    <!-- AWS CodeArtifact repository -->
     <repositories>
         <repository>
             <id>codeartifact</id>
@@ -22,7 +27,6 @@
         </repository>
     </repositories>
 
-    <!-- Deploy JAR to CodeArtifact -->
     <distributionManagement>
         <repository>
             <id>codeartifact</id>
@@ -31,13 +35,15 @@
     </distributionManagement>
 
     <dependencies>
-        <!-- Example dependency -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>3.2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
-
 </project>
 

@@ -20,16 +20,17 @@ phases:
           --domain-owner $DOMAIN_OWNER \
           --query authorizationToken \
           --output text)
-      - echo "✅ Token retrieved"
-      - mkdir -p ~/.m2
-      - cp settings.xml ~/.m2/settings.xml
 
   pre_build:
     commands:
       - echo "📦 Building JAR..."
-      - mvn clean package -DskipTests -s ~/.m2/settings.xml
+      - mvn clean package -DskipTests \
+        -Daws.codeArtifact.token=$CODEARTIFACT_AUTH_TOKEN \
+        -Daws.codeArtifact.username=aws
       - echo "🚀 Deploying to CodeArtifact..."
-      - mvn deploy -s ~/.m2/settings.xml
+      - mvn deploy \
+        -Daws.codeArtifact.token=$CODEARTIFACT_AUTH_TOKEN \
+        -Daws.codeArtifact.username=aws
 
       - echo "🔐 Logging in to Amazon ECR..."
       - aws ecr get-login-password --region $AWS_REGION \
