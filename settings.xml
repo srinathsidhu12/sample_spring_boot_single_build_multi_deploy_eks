@@ -1,4 +1,8 @@
-<settings>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                              https://maven.apache.org/xsd/settings-1.0.0.xsd">
+
   <servers>
     <server>
       <id>codeartifact</id>
@@ -13,14 +17,21 @@
       <repositories>
         <repository>
           <id>codeartifact</id>
-          <url>https://sample-699475953949.d.codeartifact.ap-south-1.amazonaws.com/maven/sample-java-app/</url>
+          <url>${env.MAVEN_REPO_URL}</url>
         </repository>
       </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>codeartifact</id>
+          <url>${env.MAVEN_REPO_URL}</url>
+        </pluginRepository>
+      </pluginRepositories>
     </profile>
   </profiles>
 
   <activeProfiles>
     <activeProfile>codeartifact-repo</activeProfile>
   </activeProfiles>
+
 </settings>
 

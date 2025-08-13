@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
-         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.example</groupId>
@@ -9,11 +9,19 @@
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <!-- This tells Maven where to deploy -->
+    <!-- Repositories to fetch dependencies -->
+    <repositories>
+        <repository>
+            <id>codeartifact</id>
+            <url>${env.MAVEN_REPO_URL}</url>
+        </repository>
+    </repositories>
+
+    <!-- Deploy target -->
     <distributionManagement>
         <repository>
             <id>codeartifact</id>
-            <url>https://sample-699475953949.d.codeartifact.ap-south-1.amazonaws.com/maven/sample-java-app/</url>
+            <url>${env.MAVEN_REPO_URL}</url>
         </repository>
     </distributionManagement>
 

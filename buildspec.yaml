@@ -12,16 +12,18 @@ phases:
     runtime-versions:
       java: corretto17
     commands:
-      - echo "📦 Copying settings.xml to Maven home"
+      - echo "📦 Setting up Maven settings.xml"
       - mkdir -p ~/.m2
       - cp settings.xml ~/.m2/settings.xml
+
       - echo "📦 Fetching CodeArtifact Domain Name..."
       - export DOMAIN_NAME=$(aws codeartifact list-domains --region $AWS_REGION --query 'domains[0].name' --output text)
       - echo "✅ DOMAIN_NAME = $DOMAIN_NAME"
+
       - echo "👤 Fetching AWS Account ID..."
       - export DOMAIN_OWNER=$(aws sts get-caller-identity --query 'Account' --output text)
       - echo "✅ DOMAIN_OWNER = $DOMAIN_OWNER"
-      # Authenticate to CodeArtifact (for Maven dependencies)
+
       - echo "🔐 Getting CodeArtifact auth token..."
       - export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token \
           --domain "$DOMAIN_NAME" \
@@ -30,7 +32,7 @@ phases:
           --query authorizationToken \
           --output text)
 
-      # Configure Maven to use CodeArtifact repository
+      - echo "🔗 Getting Maven repository endpoint..."
       - export MAVEN_REPO_URL=$(aws codeartifact get-repository-endpoint \
           --domain "$DOMAIN_NAME" \
           --domain-owner "$DOMAIN_OWNER" \
@@ -40,12 +42,11 @@ phases:
           --query repositoryEndpoint \
           --output text)
       - echo "✅ Maven Repo URL = $MAVEN_REPO_URL"
-       
 
   pre_build:
     commands:
-      - echo "🏗️ Building JAR..."
-      - mvn clean package -DskipTests
+      - echo "🏗️ Building JAR using CodeArtifact dependencies..."
+      - mvn clean package -DskipTests -s ~/.m2/settings.xml
       - echo "🔐 Logging in to Amazon ECR..."
       - aws ecr get-login-password --region $AWS_REGION \
         | docker login --username AWS --password-stdin $ECR_URI
@@ -53,7 +54,7 @@ phases:
   build:
     commands:
       - echo "📤 Deploying JAR to CodeArtifact..."
-      - mvn deploy
+      - mvn deploy -DskipTests -s ~/.m2/settings.xml
       - echo "🐳 Building Docker image..."
       - docker build -t $ECR_URI:$IMAGE_TAG .
 
