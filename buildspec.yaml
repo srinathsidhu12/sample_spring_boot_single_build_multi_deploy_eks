@@ -24,14 +24,9 @@ phases:
   pre_build:
     commands:
       - echo "📦 Building JAR..."
-      - mvn clean package -DskipTests \
-        -Daws.codeArtifact.token=$CODEARTIFACT_AUTH_TOKEN \
-        -Daws.codeArtifact.username=aws
+      - mvn clean package -DskipTests -Daws.codeArtifact.token=$CODEARTIFACT_AUTH_TOKEN -Daws.codeArtifact.username=aws
       - echo "🚀 Deploying to CodeArtifact..."
-      - mvn deploy \
-        -Daws.codeArtifact.token=$CODEARTIFACT_AUTH_TOKEN \
-        -Daws.codeArtifact.username=aws
-
+      - mvn deploy -Daws.codeArtifact.token=$CODEARTIFACT_AUTH_TOKEN -Daws.codeArtifact.username=aws
       - echo "🔐 Logging in to Amazon ECR..."
       - aws ecr get-login-password --region $AWS_REGION \
         | docker login --username AWS --password-stdin $ECR_URI
