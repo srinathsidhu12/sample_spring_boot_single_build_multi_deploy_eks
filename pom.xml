@@ -61,6 +61,8 @@
     </dependencies>
 
     <build>
+	<!-- Ensure the JAR filename matches Docker expectations -->
+        <finalName>sample-java-app</finalName>
         <plugins>
             <!-- Ensure Spring Boot packaging -->
             <plugin>
