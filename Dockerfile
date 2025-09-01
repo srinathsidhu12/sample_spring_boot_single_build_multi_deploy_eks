@@ -1,5 +1,5 @@
 FROM public.ecr.aws/docker/library/openjdk:17-jdk-slim
 WORKDIR /app
 COPY target/sample-java-app.jar app.jar
-ENTRYPOINT ["java", "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}", "-jar", "/app/app.jar"]
+ENTRYPOINT ["sh", "-c", "java -Dspring.profiles.active=$SPRING_PROFILES_ACTIVE -jar /app/app.jar"]
 
