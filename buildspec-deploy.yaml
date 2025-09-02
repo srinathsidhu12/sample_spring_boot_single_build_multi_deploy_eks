@@ -1,0 +1,14 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo "⚙️ Setting up kubectl..."
+      - aws eks update-kubeconfig --region $AWS_REGION --name springboot-cluster
+  build:
+    commands:
+      - IMAGE_TAG=$(cat imageTag.txt)
+      - echo "🚀 Deploying $ECR_URI:$IMAGE_TAG to $ENV namespace..."
+      - sed -i "s|<IMAGE_PLACEHOLDER>|$ECR_URI:$IMAGE_TAG|g" k8s/$ENV/deployment.yaml
+      - kubectl apply -f k8s/$ENV/
+

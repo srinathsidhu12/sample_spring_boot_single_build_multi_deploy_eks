@@ -72,10 +72,11 @@ phases:
     commands:
       - echo "📤 Pushing Docker image..."
       - docker push $ECR_URI:$IMAGE_TAG
-      - echo "📝 Creating imagedefinitions.json..."
-      - echo "[{\"name\":\"sample-java-container\",\"imageUri\":\"$ECR_URI:$IMAGE_TAG\"}]" > imagedefinitions.json
+      - echo "📝 Writing image tag for deploy stage..."
+      - echo $IMAGE_TAG > imageTag.txt
 
 artifacts:
   files:
-    - imagedefinitions.json
+    - imageTag.txt
+    - k8s/**/*   # export k8s manifests so deploy stage can use them
 

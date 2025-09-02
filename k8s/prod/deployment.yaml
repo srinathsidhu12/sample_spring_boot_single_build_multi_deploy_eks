@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-java-app
+  namespace: prod
+  labels:
+    app: sample-java-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sample-java-app
+  template:
+    metadata:
+      labels:
+        app: sample-java-app
+    spec:
+      containers:
+      - name: sample-java-app
+        image: <IMAGE_PLACEHOLDER>   # replaced dynamically in buildspec
+        ports:
+        - containerPort: 8080
+        env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: prod
+
