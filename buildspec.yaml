@@ -79,4 +79,5 @@ artifacts:
   files:
     - imageTag.txt
     - k8s/**/*   # export k8s manifests so deploy stage can use them
+    - buildspec-deploy.yaml
 
