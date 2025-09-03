@@ -4,7 +4,7 @@ phases:
   install:
     commands:
       - echo "⚙️ Setting up kubectl..."
-      - aws eks update-kubeconfig --region ap-south-1 --name java-cluster
+      - aws eks update-kubeconfig --region $AWS_REGION --name java-cluster
   build:
     commands:
       - IMAGE_TAG=$(cat imageTag.txt)
