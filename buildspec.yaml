@@ -73,7 +73,7 @@ phases:
       - echo "📤 Pushing Docker image..."
       - docker push $ECR_URI:$IMAGE_TAG
       - echo "📝 Writing image tag for deploy stage..."
-      - echo $IMAGE_TAG > imageTag.txt
+      - echo "$ECR_URI:$IMAGE_TAG" > imageTag.txt
 
 artifacts:
   files:

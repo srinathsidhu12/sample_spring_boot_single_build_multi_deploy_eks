@@ -11,9 +11,9 @@ phases:
       - export AWS_REGION=$AWS_REGION
   build:
     commands:
-      - IMAGE_TAG=$(cat imageTag.txt)
-      - echo "🚀 Deploying $ECR_URI:$IMAGE_TAG to $ENV namespace..."
-      - sed -i "s|<IMAGE_PLACEHOLDER>|$ECR_URI:$IMAGE_TAG|g" k8s/$ENV/deployment.yaml
+      - IMAGE_URI=$(cat imageTag.txt)
+      - echo "🚀 Deploying $IMAGE_URI to $ENV namespace..."
+      - sed -i "s|<IMAGE_PLACEHOLDER>|$IMAGE_URI|g" k8s/$ENV/deployment.yaml
       # 🔍 Debugging starts here
       - echo "Checking IAM identity..."
       - aws sts get-caller-identity
