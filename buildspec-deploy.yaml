@@ -19,6 +19,8 @@ phases:
       - aws sts get-caller-identity
       - echo "Testing token fetch..."
       - aws eks get-token --region $AWS_REGION --cluster-name java-cluster
+      - echo "===== kubeconfig ====="
+      - cat /root/.kube/config
       - kubectl get ns
       # 🔍 Debugging ends here
       - kubectl apply -f k8s/$ENV/
