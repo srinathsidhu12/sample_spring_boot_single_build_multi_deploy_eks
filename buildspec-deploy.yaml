@@ -5,6 +5,10 @@ phases:
     commands:
       - echo "⚙️ Setting up kubectl..."
       - aws eks update-kubeconfig --region $AWS_REGION --name java-cluster
+      # ensure AWS CLI has access to role creds
+      - export KUBECONFIG=/root/.kube/config
+      - export AWS_DEFAULT_REGION=$AWS_REGION
+      - export AWS_REGION=$AWS_REGION
   build:
     commands:
       - IMAGE_TAG=$(cat imageTag.txt)
@@ -13,6 +17,9 @@ phases:
       # 🔍 Debugging starts here
       - echo "Checking IAM identity..."
       - aws sts get-caller-identity
+      - echo "Testing token fetch..."
+      - aws eks get-token --region $AWS_REGION --cluster-name java-cluster
+      - kubectl get ns
       # 🔍 Debugging ends here
       - kubectl apply -f k8s/$ENV/
 
