@@ -10,5 +10,15 @@ phases:
       - IMAGE_TAG=$(cat imageTag.txt)
       - echo "🚀 Deploying $ECR_URI:$IMAGE_TAG to $ENV namespace..."
       - sed -i "s|<IMAGE_PLACEHOLDER>|$ECR_URI:$IMAGE_TAG|g" k8s/$ENV/deployment.yaml
+      # 🔍 Debugging starts here
+      - echo "===== AWS caller identity ====="
+      - aws sts get-caller-identity
+      - echo "===== Kubeconfig (current context) ====="
+      - kubectl config view --minify
+      - echo "===== Can this role create deployments in $ENV? ====="
+      - kubectl auth can-i create deployments --namespace $ENV
+      - echo "===== Listing namespaces (debug) ====="
+      - kubectl get ns -v=6 || true
+      # 🔍 Debugging ends here
       - kubectl apply -f k8s/$ENV/
 
